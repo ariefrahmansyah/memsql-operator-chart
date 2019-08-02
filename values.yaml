@@ -1,0 +1,98 @@
+## Provide a name in place of memsql-operator for `app:` labels
+##
+nameOverride: ""
+
+## Provide a name to substitute for the full names of resources
+##
+fullnameOverride: ""
+
+## Manages MemSQL cluster
+##
+memsqlClusterOperator:
+  ## memsql-operator image
+  ##
+  image:
+    repository: memsql/operator
+    tag: 7790a446
+    pullPolicy: IfNotPresent
+
+  ## Define which Nodes the Pods are scheduled on.
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  ##
+  nodeSelector: {}
+
+## Deploy a MemSQL cluster
+##
+memsqlCluster:
+  ## MemSQL cluster name of your choice
+  ##
+  name: memsql-cluster
+
+  ## MemSQL license key
+  ##
+  # license:
+
+  ## Hashed version of a secure password for the admin database user on the cluster.
+  ## Password hash should be a 40-digit hexadecimal number.
+  ## An example of how to create a hashed password in Python is shown below.
+  ## >> from hashlib import sha1
+  ## >> print(sha1(sha1('admin').digest()).hexdigest().upper())
+  adminHashedPassword: "4ACFE3202A5FF5CF467898FC58AAB1D615029441"
+
+  ## The version of MemSQL that will be deployed in your cluster.
+  ## The latest release ID (as well as the version it corresponds to) can be found in
+  ## https://release.memsql.com/production/index/memsqlserver/latest.json.
+  ##
+  releaseID: 08c56e4d-a132-478b-ab63-4a02657bf05c
+
+  ## Change redundancyLevel to 2 if you want to enable high availability.
+  ## For more information on this feature, see Managing High Availability
+  ## (https://docs.memsql.com/operational-manual/v6.7/managing-high-availability).
+  ##
+  redundancyLevel: 1
+
+  ## Specification for aggregator node
+  ##
+  aggregatorSpec:
+    ## The number of aggregator nodes in your cluster
+    ##
+    count: 1
+
+    ## Specifies the vCPU and RAM size of an aggregator node
+    ## where a height of 1 equals 8 vCPU cores and 32 GB of RAM.
+    ## The smallest value you can set is 0.5 (4 vCPU cores, 16 GB of RAM).
+    ##
+    height: 0.5
+
+    ## The storageGB value corresponds to the amount of storage each aggregator node
+    ## should request for their persistent data volume.
+    ##
+    storageGB: 8
+
+    ## The storageClass value specifies which storage class to use for the PersistedVolume
+    ## in the Kubernetes cluster.
+    ##
+    storageClass: standard
+
+  ## Specification for leaf node
+  ##
+  leafSpec:
+    ## The number of leaf nodes in your cluster
+    ##
+    count: 1
+
+    ## Specifies the vCPU and RAM size of an leaf node
+    ## where a height of 1 equals 8 vCPU cores and 32 GB of RAM.
+    ## The smallest value you can set is 0.5 (4 vCPU cores, 16 GB of RAM).
+    ##
+    height: 0.5
+
+    ## The storageGB value corresponds to the amount of storage each leaf node
+    ## should request for their persistent data volume.
+    ##
+    storageGB: 8
+
+    ## The storageClass value specifies which storage class to use for the PersistedVolume
+    ## in the Kubernetes cluster.
+    ##
+    storageClass: standard

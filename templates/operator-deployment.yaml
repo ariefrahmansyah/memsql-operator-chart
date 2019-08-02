@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "memsql-operator-chart.fullname" . }}
+  labels:
+{{ include "memsql-operator-chart.labels" . | indent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+{{ include "memsql-operator-chart.labels" . | indent 6 }}
+  template:
+    metadata:
+      labels:
+{{ include "memsql-operator-chart.labels" . | indent 8 }}
+    spec:
+    {{- with .Values.memsqlClusterOperator.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "memsql-operator-chart.fullname" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.memsqlClusterOperator.image.repository }}:{{ .Values.memsqlClusterOperator.image.tag }}"
+          imagePullPolicy: {{ .Values.memsqlClusterOperator.image.pullPolicy }}
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: {{ include "memsql-operator-chart.name" . }}
+      {{- with .Values.memsqlClusterOperator.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

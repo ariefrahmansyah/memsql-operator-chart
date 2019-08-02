@@ -1,0 +1,17 @@
+apiVersion: memsql.com/v1alpha1
+kind: MemsqlCluster
+metadata:
+  name: {{ .Values.memsqlCluster.name }}
+  annotations:
+    "helm.sh/hook": "post-install"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+spec:
+  license: {{ .Values.memsqlCluster.license }}
+  adminHashedPassword: "*{{ .Values.memsqlCluster.adminHashedPassword }}"
+  releaseID: {{ .Values.memsqlCluster.releaseID }}
+  redundancyLevel: {{ .Values.memsqlCluster.redundancyLevel }}
+
+  aggregatorSpec:
+{{ toYaml .Values.memsqlCluster.aggregatorSpec | indent 4 }}
+  leafSpec:
+{{ toYaml .Values.memsqlCluster.leafSpec | indent 4 }}
